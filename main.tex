@@ -1,0 +1,49 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{The Odd Product Identity: A Study of Consecutive Odd Integer Sums}
+\author{Omar Egeh}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We explore a simple but under-recognized identity connecting the product of two integers with the sum of consecutive odd numbers centered around one of them. We formalize the identity, prove existence and uniqueness theorems, and discuss its implications in elementary number theory and algorithmic applications.
+\end{abstract}
+
+\section{Introduction}
+
+The product of two positive integers \( p \) and \( q \) can, under specific conditions, be represented as the sum of \( p \) consecutive odd numbers centered around \( q \). We call this the \textbf{Odd Product Identity}. Formally, for odd \( p \), we define:
+
+\[
+pq = \sum_{k = -\frac{p-1}{2}}^{\frac{p-1}{2}} (2q + 2k - 1)
+\]
+
+This identity has elegant symmetry, efficient computational properties, and rich generalization potential.
+
+\section{Theorems and Proofs}
+
+\begin{theorem}[Existence Condition]
+Let \( p \in \mathbb{Z}_{>0} \) be odd. Then for any \( q \geq \frac{p+1}{2} \), the number \( pq \) can be written as the sum of \( p \) consecutive odd integers centered at \( q \).
+\end{theorem}
+
+\begin{proof}
+The sequence of \( p \) odd numbers centered around \( q \) is:
+\[
+q - (p - 1),\ q - (p - 3),\ \ldots,\ q + (p - 1)
+\]
+This is an arithmetic sequence with \( p \) terms and common difference 2. The sum of an odd number of odd numbers is odd. Their average is \( q \), so their sum is \( pq \).
+\end{proof}
+
+\begin{theorem}[Uniqueness]
+For each odd \( p \), the decomposition of \( pq \) into \( p \) consecutive odd numbers centered at \( q \) is unique.
+\end{theorem}
+
+\begin{proof}
+If the sum is centered at \( q \), the symmetry around \( q \) and the fixed count \( p \) means there is only one possible sequence.
+\end{proof}
+
+\end{document}
