@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symmetric Odd Number Tree</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: auto;
+        }
+        
+        .tree-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: none;
+            overflow-x: auto;
+            min-width: 800px;
+        }
+        
+        .tree-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .tree-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            position: relative;
+            width: 100%;
+            min-width: fit-content;
+        }
+        
+        .sum-box {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .equals {
+            font-size: 20px;
+            font-weight: bold;
+            color: #555;
+            margin: 0 10px;
+        }
+        
+        .numbers-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+        
+        .number {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 3px 10px rgba(78, 205, 196, 0.3);
+            transition: transform 0.2s ease;
+        }
+        
+        .number:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+        
+        .plus {
+            color: #666;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .center-number {
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: #333;
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
+        }
+        
+        .connecting-lines {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            width: 2px;
+            height: 15px;
+            background: linear-gradient(to bottom, #ddd, transparent);
+            transform: translateX(-50%);
+        }
+        
+        .row-number {
+            position: absolute;
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #f8f9fa;
+            color: #666;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .pattern-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 10px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .pattern-info h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        
+        .pattern-info p {
+            margin: 5px 0;
+            color: #333;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="tree-container">
+        <div class="tree-title">🌳 Symmetric Odd Number Tree (Center: 15)</div>
+        
+        <div class="tree" id="tree">
+            <!-- Tree will be generated here -->
+        </div>
+        
+        <div class="pattern-info">
+            <h3>Pattern Explanation:</h3>
+            <p><strong>Row n:</strong> Contains (1 + 2n) odd numbers, symmetric around 15</p>
+            <p><strong>Numbers:</strong> Start from (15 - 2n) and increment by 2</p>
+            <p><strong>Sum:</strong> Always equals 15 × (number of terms in row)</p>
+            <p><strong>Growth:</strong> Each row adds one number to each side</p>
+        </div>
+    </div>
+
+    <script>
+        function generateSymmetricOddTree(center, numRows) {
+            const rows = [];
+            for (let i = 0; i < numRows; i++) {
+                const p = 1 + 2 * i;
+                const half = Math.floor(p / 2);
+                const sequence = [];
+                for (let k = -half; k <= half; k++) {
+                    sequence.push(center + 2 * k);
+                }
+                const total = sequence.reduce((sum, num) => sum + num, 0);
+                rows.push({total, sequence, rowNumber: i});
+            }
+            return rows;
+        }
+
+        function renderTree() {
+            const treeContainer = document.getElementById('tree');
+            const treeRows = generateSymmetricOddTree(15, 10);
+            
+            treeRows.forEach((row, index) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'tree-row';
+                
+                // Add connecting lines (except for first row)
+                if (index > 0) {
+                    const lines = document.createElement('div');
+                    lines.className = 'connecting-lines';
+                    rowDiv.appendChild(lines);
+                }
+                
+                // Row number
+                const rowNumber = document.createElement('div');
+                rowNumber.className = 'row-number';
+                rowNumber.textContent = index;
+                rowDiv.appendChild(rowNumber);
+                
+                // Sum box
+                const sumBox = document.createElement('div');
+                sumBox.className = 'sum-box';
+                sumBox.textContent = row.total;
+                rowDiv.appendChild(sumBox);
+                
+                // Equals sign
+                const equals = document.createElement('div');
+                equals.className = 'equals';
+                equals.textContent = '=';
+                rowDiv.appendChild(equals);
+                
+                // Numbers container
+                const numbersContainer = document.createElement('div');
+                numbersContainer.className = 'numbers-container';
+                
+                row.sequence.forEach((num, numIndex) => {
+                    if (numIndex > 0) {
+                        const plus = document.createElement('span');
+                        plus.className = 'plus';
+                        plus.textContent = '+';
+                        numbersContainer.appendChild(plus);
+                    }
+                    
+                    const numberDiv = document.createElement('div');
+                    numberDiv.className = 'number';
+                    if (num === 15) {
+                        numberDiv.classList.add('center-number');
+                    }
+                    numberDiv.textContent = num;
+                    numbersContainer.appendChild(numberDiv);
+                });
+                
+                rowDiv.appendChild(numbersContainer);
+                treeContainer.appendChild(rowDiv);
+            });
+        }
+
+        // Render the tree when page loads
+        renderTree();
+    </script>
+</body>
+</html>
