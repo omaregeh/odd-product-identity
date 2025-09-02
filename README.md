@@ -26,16 +26,24 @@ Interactive visualizations showing how odd numbers can be arranged in symmetric 
 
 ### Example Output (Center: 3):
 3  =  3
+
 9  =  1 + 3 + 5
+
 15  =  -1 + 1 + 3 + 5 + 7
+
 21  =  -3 + -1 + 1 + 3 + 5 + 7 + 9
+
 27  =  -5 + -3 + -1 + 1 + 3 + 5 + 7 + 9 + 11
 
 ### Example Output (Center: 15):
 15  =  15
+
 45  =  13 + 15 + 17
+
 75  =  11 + 13 + 15 + 17 + 19
+
 105  =  9 + 11 + 13 + 15 + 17 + 19 + 21
+
 135  =  7 + 9 + 11 + 13 + 15 + 17 + 19 + 21 + 23
 
 ### Mathematical Insight:
