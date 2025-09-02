@@ -67,7 +67,3 @@ Then run the Python scripts:
 bashpython3 odd_product_identity.py
 python3 plot_multiple_N.py
 python3 generate_tree.py
-
-
-### STATUS:
-Work in progress 
