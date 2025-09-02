@@ -6,7 +6,7 @@
     <title>Symmetric Odd Number Tree</title>
     <style>
         body {
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             margin: 0;
             padding: 20px;
@@ -19,21 +19,21 @@
         
         .tree-container {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             width: 100%;
             max-width: none;
             overflow-x: auto;
-            min-width: 800px;
+            min-width: 1000px;
         }
         
         .tree-title {
             text-align: center;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            color: #333;
-            margin-bottom: 30px;
+            color: #2c3e50;
+            margin-bottom: 40px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
         
@@ -41,14 +41,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 25px;
+            gap: 30px;
         }
         
         .tree-row {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
+            justify-content: center;
+            gap: 20px;
             position: relative;
             width: 100%;
             min-width: fit-content;
@@ -57,26 +57,27 @@
         .sum-box {
             background: linear-gradient(135deg, #ff6b6b, #ee5a24);
             color: white;
-            padding: 8px 15px;
-            border-radius: 25px;
+            padding: 12px 20px;
+            border-radius: 30px;
             font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-            min-width: 60px;
+            font-size: 18px;
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            min-width: 70px;
             text-align: center;
+            margin-right: 30px;
         }
         
         .equals {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
             color: #555;
-            margin: 0 10px;
+            margin: 0 15px;
         }
         
         .numbers-container {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
             flex-wrap: nowrap;
             white-space: nowrap;
         }
@@ -84,88 +85,131 @@
         .number {
             background: linear-gradient(135deg, #4ecdc4, #44a08d);
             color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 10px 16px;
+            border-radius: 25px;
             font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 3px 10px rgba(78, 205, 196, 0.3);
-            transition: transform 0.2s ease;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+            transition: all 0.3s ease;
+            min-width: 40px;
+            text-align: center;
         }
         
         .number:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.5);
         }
         
         .plus {
             color: #666;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 20px;
         }
         
         .center-number {
             background: linear-gradient(135deg, #ffd700, #ffb347);
             color: #333;
-            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.4);
-        }
-        
-        .connecting-lines {
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            width: 2px;
-            height: 15px;
-            background: linear-gradient(to bottom, #ddd, transparent);
-            transform: translateX(-50%);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+            transform: scale(1.1);
+            font-weight: 900;
         }
         
         .row-number {
             position: absolute;
-            left: -50px;
+            left: -80px;
             top: 50%;
             transform: translateY(-50%);
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
             color: #666;
-            padding: 4px 8px;
-            border-radius: 10px;
-            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 14px;
             font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .pattern-info {
-            margin-top: 30px;
-            padding: 20px;
-            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            border-radius: 10px;
-            border-left: 4px solid #2196f3;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            border-radius: 15px;
+            border-left: 6px solid #4caf50;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
         }
         
         .pattern-info h3 {
             margin-top: 0;
-            color: #1976d2;
+            color: #2e7d32;
+            font-size: 22px;
         }
         
         .pattern-info p {
-            margin: 5px 0;
+            margin: 10px 0;
             color: #333;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-size: 16px;
         }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        .sum-color { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .center-color { background: linear-gradient(135deg, #ffd700, #ffb347); }
+        .number-color { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
     </style>
 </head>
 <body>
     <div class="tree-container">
         <div class="tree-title">🌳 Symmetric Odd Number Tree (Center: 15)</div>
         
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color sum-color"></div>
+                <span>Sum</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color center-color"></div>
+                <span>Center (15)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color number-color"></div>
+                <span>Other Numbers</span>
+            </div>
+        </div>
+        
         <div class="tree" id="tree">
             <!-- Tree will be generated here -->
         </div>
         
         <div class="pattern-info">
-            <h3>Pattern Explanation:</h3>
+            <h3>🔢 Pattern Explanation:</h3>
             <p><strong>Row n:</strong> Contains (1 + 2n) odd numbers, symmetric around 15</p>
             <p><strong>Numbers:</strong> Start from (15 - 2n) and increment by 2</p>
             <p><strong>Sum:</strong> Always equals 15 × (number of terms in row)</p>
-            <p><strong>Growth:</strong> Each row adds one number to each side</p>
+            <p><strong>Growth:</strong> Each row adds one number to each side, forming a pyramid</p>
         </div>
     </div>
 
@@ -189,16 +233,11 @@
             const treeContainer = document.getElementById('tree');
             const treeRows = generateSymmetricOddTree(15, 10);
             
+            treeContainer.innerHTML = '';
+            
             treeRows.forEach((row, index) => {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'tree-row';
-                
-                // Add connecting lines (except for first row)
-                if (index > 0) {
-                    const lines = document.createElement('div');
-                    lines.className = 'connecting-lines';
-                    rowDiv.appendChild(lines);
-                }
                 
                 // Row number
                 const rowNumber = document.createElement('div');
