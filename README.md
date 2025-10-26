@@ -151,5 +151,3 @@ The image above was generated from the **p = 2 (Sierpiński)** mask at depth 9, 
 Based on *Symmetric Odd Number Tree (Center 3) + Pascal Multiplicities*
 © 2025 Omar Egeh — Odd Product Identity Repository
 
-```
-
