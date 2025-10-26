@@ -153,10 +153,3 @@ Based on *Symmetric Odd Number Tree (Center 3) + Pascal Multiplicities*
 
 ```
 
----
-
-✅ **How to finish up**
-1. Upload `sierpinski-tree-readme.png` to your repo root.  
-2. Replace your old `README.md` with the text above.  
-3. Commit — GitHub will render the image and math beautifully.
-```
