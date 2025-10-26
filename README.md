@@ -49,6 +49,9 @@ Interactive visualizations showing how odd numbers can be arranged in symmetric 
 ### Mathematical Insight:
 The sum of n consecutive odd numbers centered around k is always k × n, which connects to the broader odd product identity explored in this repository.
 
+- [Center: 3 (with Pascal multiplicities)](https://omaregeh.github.io/odd-product-identity/symmetric-odd-tree-center3-pascal.html)
+
+
 ## What's Included
 
 - `odd_product_identity.py`: A Python script to find decompositions for a single number \( N \).
@@ -57,6 +60,7 @@ The sum of n consecutive odd numbers centered around k is always k × n, which c
 - `symmetric-odd-tree-center3.html`: Interactive visualization centered on 3.
 - `symmetric-odd-tree-center15.html`: Interactive visualization centered on 15.
 - `main.tex`: A LaTeX paper draft including definitions, theorems, and introduction.
+- Pascal stuff
 
 ## How to Use
 
