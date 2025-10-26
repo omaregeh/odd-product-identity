@@ -3,27 +3,30 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Symmetric Odd Number Tree (Center 3) + Pascal Multiplicities</title>
+<title>Symmetric Odd Number Tree (Center = 3) + Pascal & Sierpiński</title>
 <style>
   :root{
     --bg:#0b0f14; --panel:#121922; --ink:#e6eef7; --muted:#a8b3c2;
-    --chip:#1e2a38; --chip2:#263445; --accent:#7cc0ff;
+    --chip:#1e2a38; --chip2:#263445; --accent:#7cc0ff; --dim:0.18;
   }
-  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font:15px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-  header { padding:18px 20px; background:linear-gradient(180deg, #0d141d, #0b0f14); position:sticky; top:0; z-index:10; border-bottom:1px solid #0f1620;}
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font:15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+  header { padding:18px 20px; background:linear-gradient(180deg, #0d141d, #0b0f14);
+    position:sticky; top:0; z-index:10; border-bottom:1px solid #0f1620;}
   h1 { margin:0 0 4px; font-size:18px; }
   p.sub { margin:0; color:var(--muted); }
   .controls { display:flex; flex-wrap:wrap; gap:10px 14px; margin-top:12px; align-items:center;}
   .card { background:var(--panel); border:1px solid #0f1620; border-radius:14px; padding:12px 14px; }
+  .grid { display:grid; grid-template-columns: repeat(2, minmax(200px, auto)); gap:12px; }
   label { color:var(--muted); }
-  input[type="range"] { width:220px; }
-  .tree { padding:20px; display:flex; flex-direction:column; gap:10px; }
-  .row { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  input[type="range"] { width:240px; }
+  .tree { padding:18px; display:flex; flex-direction:column; gap:9px; }
+  .row { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; }
   .node {
     position:relative; background:var(--chip); border:1px solid #132031;
-    border-radius:999px; padding:8px 10px; min-width:48px; text-align:center;
+    border-radius:999px; padding:8px 10px; min-width:46px; text-align:center;
     filter:drop-shadow(0 1px 0 rgba(0,0,0,.6));
-    transition:transform .15s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    transition:transform .15s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease, opacity .2s ease;
   }
   .node:hover { transform:translateY(-2px); z-index:1; box-shadow:0 8px 20px rgba(0,0,0,.28); }
   .node .value { font-weight:600; letter-spacing:0.2px; }
@@ -32,43 +35,85 @@
   .badge {
     position:absolute; top:-10px; right:-10px; background:#162635; border:1px solid #22405f;
     border-radius:999px; padding:2px 8px; font-size:11px; color:#9fd0ff; font-weight:600;
+    max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
   .legend { display:flex; gap:10px; align-items:center; flex-wrap:wrap; color:var(--muted); }
   .dot { width:12px; height:12px; border-radius:999px; display:inline-block; margin-right:6px; border:1px solid rgba(255,255,255,.08); }
-  .k0 { background:#93c5fd; } /* k ≡ 0 (mod 3) */
-  .k1 { background:#86efac; } /* k ≡ 1 (mod 3) */
-  .k2 { background:#fca5a5; } /* k ≡ 2 (mod 3) */
-  .footer { color:var(--muted); text-align:center; padding:28px 14px; }
+  .k0 { background:#93c5fd; } /* value mod m bucket 0 */
+  .k1 { background:#86efac; }
+  .k2 { background:#fca5a5; }
+  .k3 { background:#fcd34d; }
+  .k4 { background:#c4b5fd; }
+  .k5 { background:#fdba74; }
+  .k6 { background:#a5b4fc; }
+  .k7 { background:#a7f3d0; }
+  .k8 { background:#f9a8d4; }
+  .dim { opacity:var(--dim); filter:grayscale(0.8); }
+  .footer { color:var(--muted); text-align:center; padding:22px 14px; }
   .mono { font-feature-settings:"tnum" 1, "lnum" 1; font-variant-numeric:tabular-nums lining-nums; }
-  .pill { display:inline-flex; gap:8px; align-items:center; background:#0f1620; border:1px solid #15202e; padding:8px 10px; border-radius:999px; }
+  .pill { display:inline-flex; gap:8px; align-items:center; background:#0f1620; border:1px solid #15202e; padding:8px 10px; border-radius:999px; white-space:nowrap; }
   a { color:#9fd0ff; text-decoration:none; }
   a:hover { text-decoration:underline; }
+  .stats { color:var(--muted); margin-left:8px; }
 </style>
 </head>
 <body>
 <header>
-  <h1>Symmetric Odd Tree (Center = 3) with Pascal Multiplicities</h1>
-  <p class="sub">Each row is a ±2 random walk of length <span id="nlabel" class="mono">0</span>: multiplicity at value <span class="mono">3+2k</span> is <span class="mono">C(n, (n+k)/2)</span> when <span class="mono">n+k</span> is even.</p>
-  <div class="controls">
+  <h1>Symmetric Odd Tree (Center = 3) — Pascal Multiplicities & Sierpiński Masks</h1>
+  <p class="sub">Row <span id="nlabel" class="mono">n</span> shows the ±2 walk of length <span class="mono">n</span>. Multiplicity of value <span class="mono">3+2k</span> is <span class="mono">C(n,(n+k)/2)</span> when <span class="mono">n+k</span> is even.</p>
+
+  <div class="controls grid">
     <div class="card">
-      <label for="depth">Max depth <span id="depthVal" class="mono">8</span></label><br>
-      <input id="depth" type="range" min="0" max="20" step="1" value="8" />
+      <label for="depth">Max depth <span id="depthVal" class="mono">24</span></label><br>
+      <input id="depth" type="range" min="0" max="40" step="1" value="24" />
+      <div class="stats mono" id="stats">Σ = 3·2^n, mean = 3, var = 4n</div>
     </div>
-    <div class="pill">
-      <input id="showMult" type="checkbox" checked />
-      <label for="showMult">Show Pascal multiplicities</label>
+
+    <div class="card">
+      <div class="pill">
+        <input id="showMult" type="checkbox" checked />
+        <label for="showMult">Show Pascal multiplicities</label>
+      </div>
+      <div class="pill">
+        <input id="sizeByMult" type="checkbox" />
+        <label for="sizeByMult">Scale node size by multiplicity</label>
+      </div>
+      <div class="pill">
+        <input id="showMeta" type="checkbox" />
+        <label for="showMeta">Show k and parity</label>
+      </div>
     </div>
-    <div class="pill">
-      <input id="sizeByMult" type="checkbox" />
-      <label for="sizeByMult">Scale node size by multiplicity</label>
+
+    <div class="card">
+      <label for="valMod">Color by value mod m</label><br/>
+      <select id="valMod">
+        <option>2</option><option selected>3</option><option>4</option><option>5</option>
+        <option>7</option><option>8</option><option>9</option><option>10</option>
+      </select>
+      <div style="height:8px"></div>
+      <label for="maskMod">Mask by multiplicity mod p</label><br/>
+      <select id="maskMod">
+        <option value="off" selected>Off</option>
+        <option value="2">p = 2 (Sierpiński)</option>
+        <option value="3">p = 3</option>
+        <option value="5">p = 5</option>
+        <option value="7">p = 7</option>
+      </select>
+      <div class="pill" style="margin-top:8px">
+        <input id="maskZero" type="checkbox" />
+        <label for="maskZero">Dim entries where C ≡ 0 (mod p)</label>
+      </div>
     </div>
-    <div class="pill">
-      <input id="colorMod3" type="checkbox" checked />
-      <label for="colorMod3">Color by (3+2k) mod 3</label>
-    </div>
-    <div class="pill">
-      <input id="showMeta" type="checkbox" />
-      <label for="showMeta">Show k and parity</label>
+
+    <div class="card">
+      <div class="legend">
+        <span>Legend (value mod m):</span>
+        <span><i class="dot k0"></i>0</span><span><i class="dot k1"></i>1</span>
+        <span><i class="dot k2"></i>2</span><span><i class="dot k3"></i>3</span>
+        <span><i class="dot k4"></i>4</span><span><i class="dot k5"></i>5</span>
+        <span><i class="dot k6"></i>6</span><span><i class="dot k7"></i>7</span>
+        <span><i class="dot k8"></i>8</span>
+      </div>
     </div>
   </div>
 </header>
@@ -76,55 +121,83 @@
 <main class="tree" id="tree"></main>
 
 <section class="footer">
-  <div class="legend">
-    <span>Legend (mod-3 coloring):</span>
-    <span><i class="dot k0"></i> k ≡ 0 → (3+2k) ≡ 0</span>
-    <span><i class="dot k1"></i> k ≡ 1 → (3+2k) ≡ 2</span>
-    <span><i class="dot k2"></i> k ≡ 2 → (3+2k) ≡ 1</span>
-  </div>
-  <p style="margin-top:10px;">Row sum identity: <span class="mono">∑ (3+2k)·C(n,(n+k)/2) = 3·2ⁿ</span> and average = 3. Quadratic moment: <span class="mono">∑ (3+2k)²·C(n,(n+k)/2) = (9+4n)·2ⁿ</span>.</p>
-  <p>Based on your repo’s tree pages and README. <a href="https://omaregeh.github.io/odd-product-identity/symmetric-odd-tree-center3.html" target="_blank" rel="noopener">Original “center=3” page</a>.</p>
+  <p class="mono">Row sum: ∑ (3+2k)·C(n,(n+k)/2) = 3·2ⁿ; Average = 3; Quadratic moment: ∑ (3+2k)²·C(n,(n+k)/2) = (9+4n)·2ⁿ.</p>
+  <p>Toggle “p = 2 (Sierpiński)” to see the classic odd/even binomial mask. Larger p (3,5,7) reveal Lucas-type modular patterns in Pascal’s triangle, transferred to your odd-walk lattice.</p>
+  <p>Original center-3 tree for reference: <a href="symmetric-odd-tree-center3.html" target="_blank" rel="noopener">symmetric-odd-tree-center3.html</a></p>
 </section>
 
 <script>
-  // ------- Binomial & helpers -------
-  function binom(n, r){
-    if (r < 0 || r > n) return 0;
-    // numerically stable multiplicative form
-    r = Math.min(r, n - r);
-    let num = 1, den = 1;
-    for (let i = 1; i <= r; i++){
-      num *= (n - r + i);
+  // ---------- BigInt helpers for exact multiplicity display ----------
+  function gcdBig(a,b){ a=a<0n?-a:a; b=b<0n?-b:b; while(b){ const t=a%b; a=b; b=t; } return a; }
+  function binomBigInt(n,r){
+    if(r<0||r>n) return 0n;
+    r = Math.min(r, n-r);
+    let num=1n, den=1n;
+    for(let i=1n;i<=BigInt(r);i++){
+      num *= BigInt(n - r) + i;
       den *= i;
+      const g = gcdBig(num,den);
+      num/=g; den/=g;
     }
-    return Math.round(num / den);
+    return num/den;
+  }
+  function shortBigInt(x){
+    const s = x.toString();
+    if(s.length<=8) return s;
+    const m = s.length-1;
+    const first = s.slice(0,3);
+    return `${first[0]}.${first.slice(1)}e${m}`;
   }
 
-  // multiplicity for value 3+2k at depth n
-  function multiplicity(n, k){
-    const t = (n + k);
-    if ((t & 1) !== 0) return 0; // parity gate
-    const r = (n + k) >> 1;
-    return binom(n, r);
+  // ---------- Numeric helpers for sizing ----------
+  // log n! via table of logs (stable for n<=4096)
+  const logTbl=[0];
+  for(let i=1;i<=4096;i++){ logTbl[i]=logTbl[i-1]+Math.log(i); }
+  function logBinom(n,r){
+    if(r<0||r>n) return -Infinity;
+    r=Math.min(r,n-r);
+    return logTbl[n]-logTbl[r]-logTbl[n-r];
+  }
+  function approxBinom(n,r){ return Math.exp(logBinom(n,r)); }
+
+  // ---------- Binomial mod p via Lucas + modular inverses ----------
+  function modPow(a,e,m){ let r=1n, A=BigInt(a)%BigInt(m), E=BigInt(e), M=BigInt(m);
+    while(E>0n){ if(E&1n) r=(r*A)%M; A=(A*A)%M; E>>=1n; } return r; }
+  function invMod(a,p){ return modPow(a,p-2,p); } // p prime
+  // precompute factorials mod p up to p-1
+  function factTables(p){
+    const P=BigInt(p);
+    const fact=[1n], inv=[1n];
+    for(let i=1n;i<P;i++) fact[Number(i)]=(fact[Number(i-1n)]*(i))%P;
+    inv[p-1]=invMod(fact[p-1],P);
+    for(let i=p-2;i>=0;i--) inv[i]=(inv[i+1]*BigInt(i+1))%P;
+    return {fact,inv,P};
+  }
+  const factCache=new Map();
+  function nCrModPrimeSmall(n,r,p,tbl){
+    if(r<0||r>n) return 0n;
+    const {fact,inv,P}=tbl;
+    const N=BigInt(n), R=BigInt(r);
+    const a=fact[n];
+    const b=(inv[r]*inv[n-r])%P;
+    return (a*b)%P;
+  }
+  function binomModPrimeLucas(n,r,p){
+    if(p==='off') return null;
+    p=Number(p);
+    if(!factCache.has(p)) factCache.set(p, factTables(p));
+    const tbl=factCache.get(p);
+    let res=1n;
+    while(n>0 || r>0){
+      const ni=n%p, ri=r%p;
+      if(ri>ni) return 0n;
+      res = (res * nCrModPrimeSmall(ni,ri,p,tbl)) % tbl.P;
+      n=Math.floor(n/p); r=Math.floor(r/p);
+    }
+    return res; // in [0, p-1]
   }
 
-  // node color class by k mod 3
-  function kModClass(k){
-    const m = ((k % 3) + 3) % 3;
-    return m === 0 ? 'k0' : (m === 1 ? 'k1' : 'k2');
-  }
-
-  // size mapping (for "scale by multiplicity")
-  function radiusFor(m, n){
-    if (m <= 0) return 0;
-    // normalize by max multiplicity at row n (which is C(n, floor(n/2)))
-    const mMax = binom(n, Math.floor(n/2));
-    const t = Math.sqrt(m / mMax); // soften scaling
-    const base = 10, extra = 18;   // px
-    return Math.round(base + extra * t);
-  }
-
-  // ------- DOM build -------
+  // ---------- UI / rendering ----------
   const qs = (s, el=document) => el.querySelector(s);
   const treeEl = qs('#tree');
   const depth = qs('#depth');
@@ -132,37 +205,77 @@
   const nlabel = qs('#nlabel');
   const showMult = qs('#showMult');
   const sizeByMult = qs('#sizeByMult');
-  const colorMod3 = qs('#colorMod3');
+  const valMod = qs('#valMod');
+  const maskMod = qs('#maskMod');
+  const maskZero = qs('#maskZero');
   const showMeta = qs('#showMeta');
+  const statsEl = qs('#stats');
+
+  // value color bucket
+  function valueClass(v, m){
+    m = Number(m);
+    const b = ((v % m) + m) % m; // bucket 0..m-1
+    return 'k' + (b % 9); // reuse 9 color chips
+  }
+
+  function radiusFor(n, r, approxM){
+    const mMax = approxBinom(n, Math.floor(n/2));
+    const t = Math.sqrt(approxM / mMax);
+    const base = 10, extra = 18;   // px
+    return Math.round(base + extra * t);
+  }
 
   function render(){
     const N = +depth.value;
     depthVal.textContent = N;
+    nlabel.textContent = N;
+    statsEl.textContent = `Σ = 3·2^${N} = ${3 * (2**Math.min(N,30))}${N>30?' (grows fast)': ''}, mean = 3, var = ${4*N}`;
+
     treeEl.innerHTML = '';
     for (let n = 0; n <= N; n++){
       const row = document.createElement('div');
       row.className = 'row';
       row.setAttribute('data-n', n);
-      // k runs from -n to n in steps of 1; value is 3+2k
+
       for (let k = -n; k <= n; k++){
+        const parityOK = ((n + k) & 1) === 0;
         const x = 3 + 2*k;
-        const mult = multiplicity(n, k);
 
         const node = document.createElement('div');
         node.className = 'node' + ((n===0)?' emph':'');
-        if (colorMod3.checked) node.classList.add(kModClass(k));
+        node.classList.add(valueClass(x, valMod.value));
 
-        // sizing
-        if (sizeByMult.checked){
-          const r = radiusFor(mult, n);
-          node.style.minWidth = (r*2)+'px';
-          node.style.padding = '8px '+Math.max(10, r-4)+'px';
+        let multStr = '', multApprox = 0;
+        let r = -1;
+
+        if (parityOK){
+          r = (n + k) >> 1;
+          // multiplicity (exact BigInt, short)
+          const mBig = binomBigInt(n, r);
+          multStr = shortBigInt(mBig);
+          // numeric approx for sizing
+          multApprox = Math.exp(logBinom(n, r));
+        }
+
+        if (sizeByMult.checked && parityOK){
+          const R = radiusFor(n, r, multApprox);
+          node.style.minWidth = (R*2)+'px';
+          node.style.padding = '8px '+Math.max(10, R-4)+'px';
         } else {
-          node.style.minWidth = '48px';
+          node.style.minWidth = '46px';
           node.style.padding = '8px 10px';
         }
 
-        // label(s)
+        // Sierpiński / mod-p mask on multiplicity
+        if (maskMod.value !== 'off' && parityOK){
+          const m = binomModPrimeLucas(n, r, maskMod.value); // 0..p-1
+          const isZero = (m===0n);
+          const dim = maskZero.checked ? isZero : (m!==0n); // choose which to dim
+          if (dim) node.classList.add('dim');
+        } else if (!parityOK){
+          node.classList.add('dim'); // parity gate = not in layer
+        }
+
         const v = document.createElement('span');
         v.className = 'value mono';
         v.textContent = x;
@@ -171,15 +284,15 @@
         if (showMeta.checked){
           const mline = document.createElement('span');
           mline.className = 'meta mono';
-          mline.textContent = `n=${n}, k=${k}, n+k ${((n+k)&1)===0?'even':'odd'}`;
+          mline.textContent = `n=${n}, k=${k}, ${parityOK?'r='+(r):'n+k odd'}`;
           node.appendChild(mline);
         }
 
-        if (showMult.checked && mult>0){
+        if (showMult.checked && parityOK){
           const b = document.createElement('span');
           b.className = 'badge mono';
-          b.title = `Multiplicity C(${n}, ${(n+k)/2})`;
-          b.textContent = mult.toString();
+          b.title = `Multiplicity C(${n}, ${r})`;
+          b.textContent = multStr;
           node.appendChild(b);
         }
 
@@ -187,10 +300,9 @@
       }
       treeEl.appendChild(row);
     }
-    nlabel.textContent = depth.value;
   }
 
-  [depth, showMult, sizeByMult, colorMod3, showMeta].forEach(inp=>{
+  [depth, showMult, sizeByMult, valMod, maskMod, maskZero, showMeta].forEach(inp=>{
     inp.addEventListener('input', render);
     inp.addEventListener('change', render);
   });
