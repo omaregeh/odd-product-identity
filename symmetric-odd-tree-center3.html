@@ -16,7 +16,7 @@
     }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--text);
       background:var(--bg);
     }
@@ -71,14 +71,51 @@
       box-shadow: var(--shadow);
       padding: 18px 14px 22px;
       overflow-x:auto;
+      position: relative;
     }
 
+    /* Optional faint center guide line to emphasize the "tree" */
+    .eq-area::before{
+      content:"";
+      position:absolute;
+      top: 12px;
+      bottom: 12px;
+      left: 50%;
+      width: 2px;
+      transform: translateX(-1px);
+      background: rgba(15, 23, 42, 0.04);
+      pointer-events:none;
+    }
+
+    /* TREE LAYOUT: left sum | centered expression | right multiplication */
     .row{
-      display:flex;
-      align-items:center;
-      gap: 14px;
+      display: grid;
+      grid-template-columns: 120px 1fr 140px;
+      align-items: center;
+      column-gap: 14px;
       padding: 10px 8px;
       white-space: nowrap;
+      position: relative;
+      z-index: 1; /* above the guide line */
+    }
+
+    .left{ justify-self: start; }
+
+    .mid{
+      justify-self: center;            /* THIS is what fixes the slant */
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .right{
+      justify-self: start;
+      font-weight: 800;
+      color:#111827;
+      opacity: 0.95;
+    }
+    .right .times{
+      padding: 0 6px;
+      opacity: 0.85;
     }
 
     .pill{
@@ -108,25 +145,15 @@
       opacity: 0.95;
       min-width: 18px;
       text-align:center;
+      margin-right: 10px;
     }
     .plus{
       font-weight: 800;
       color: #111827;
       opacity: 0.45;
-      margin: 0 2px;
+      margin: 0 8px;
       min-width: 10px;
       text-align:center;
-    }
-
-    .rhs{
-      font-weight: 800;
-      color:#111827;
-      opacity: 0.95;
-      margin-left: 6px;
-    }
-    .rhs .times{
-      padding: 0 6px;
-      opacity: 0.85;
     }
 
     .legend{
@@ -201,23 +228,25 @@
       const eqArea = document.getElementById("eqArea");
       eqArea.innerHTML = "";
 
-      // Render rows n = 0..depth (inclusive)
       for(let n=0; n<=depth; n++){
         const { m, terms, sum } = buildRow(n);
 
         const left = `<span class="pill red">${sum}</span>`;
+
         const mid = terms.map((t, i) => {
           const p = pillHTML(t);
           return (i === 0) ? p : `<span class="plus">+</span>${p}`;
         }).join("");
 
-        const right = `<span class="rhs">= ${CENTER}<span class="times">x</span>${m}</span>`;
-
-        const etc = (showEtc && n === depth) ? `<span class="rhs" style="opacity:.55; margin-left:14px;">etc</span>` : "";
+        const etc = (showEtc && n === depth) ? `<span style="opacity:.55; margin-left:14px;">etc</span>` : "";
 
         const row = document.createElement("div");
         row.className = "row";
-        row.innerHTML = `${left}<span class="eq">=</span>${mid}${right}${etc}`;
+        row.innerHTML = `
+          <div class="left">${left}</div>
+          <div class="mid"><span class="eq">=</span>${mid}</div>
+          <div class="right">= ${CENTER}<span class="times">x</span>${m}${etc}</div>
+        `;
         eqArea.appendChild(row);
       }
     }
