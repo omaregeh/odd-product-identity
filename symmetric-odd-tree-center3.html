@@ -1,291 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Symmetric Odd Number Tree</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            overflow-x: auto;
-            overflow-y: auto;
-        }
-        
-        .tree-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            margin: 20px;
-            padding: 40px 80px 40px 80px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            min-width: 1200px;
-            width: max-content;
-        }
-        
-        .tree-title {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 40px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .tree {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-        }
-        
-        .tree-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            position: relative;
-            width: 100%;
-            min-width: fit-content;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .sum-box {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-            min-width: 70px;
-            text-align: center;
-            margin-right: 30px;
-        }
-        
-        .equals {
-            font-size: 24px;
-            font-weight: bold;
-            color: #555;
-            margin: 0 15px;
-        }
-        
-        .numbers-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: nowrap;
-            white-space: nowrap;
-        }
-        
-        .number {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 25px;
-            font-weight: bold;
-            font-size: 16px;
-            box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-            transition: all 0.3s ease;
-            min-width: 40px;
-            text-align: center;
-        }
-        
-        .number:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.5);
-        }
-        
-        .plus {
-            color: #666;
-            font-weight: bold;
-            font-size: 20px;
-        }
-        
-        .center-number {
-            background: linear-gradient(135deg, #ffd700, #ffb347);
-            color: #333;
-            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
-            transform: scale(1.1);
-            font-weight: 900;
-        }
-        
-        .row-number {
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            color: #666;
-            padding: 8px 12px;
-            border-radius: 15px;
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            min-width: 30px;
-            text-align: center;
-        }
-        
-        .pattern-info {
-            margin-top: 40px;
-            padding: 30px;
-            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
-            border-radius: 15px;
-            border-left: 6px solid #4caf50;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
-        }
-        
-        .pattern-info h3 {
-            margin-top: 0;
-            color: #2e7d32;
-            font-size: 22px;
-        }
-        
-        .pattern-info p {
-            margin: 10px 0;
-            color: #333;
-            line-height: 1.6;
-            font-size: 16px;
-        }
-        
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            font-weight: bold;
-        }
-        
-        .legend-color {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 0, 0, 0.2);
-        }
-        
-        .sum-color { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
-        .center-color { background: linear-gradient(135deg, #ffd700, #ffb347); }
-        .number-color { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Symmetric Odd Number Tree (Center: 3)</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --pill-teal:#31b7a8;
+      --pill-yellow:#f6c21a;
+      --pill-red:#ff5b4d;
+      --text:#0f172a;
+      --muted:#475569;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:var(--bg);
+    }
+    .wrap{
+      max-width: 1200px;
+      margin: 24px auto 60px;
+      padding: 0 16px;
+    }
+    h1{
+      font-size: 20px;
+      margin: 0 0 10px;
+      font-weight: 700;
+    }
+    .sub{
+      color: var(--muted);
+      margin: 0 0 18px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .controls{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      flex-wrap:wrap;
+      padding: 14px 14px;
+      background:white;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .controls label{
+      font-size: 13px;
+      color: var(--muted);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .controls input[type="range"]{
+      width: 260px;
+    }
+    .controls .value{
+      font-weight: 700;
+      color: var(--text);
+      min-width: 34px;
+      text-align:right;
+    }
+
+    .eq-area{
+      background:white;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 18px 14px 22px;
+      overflow-x:auto;
+    }
+
+    .row{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      padding: 10px 8px;
+      white-space: nowrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      box-shadow: 0 10px 18px rgba(15,23,42,0.10);
+    }
+    .pill.teal{ background: var(--pill-teal); }
+    .pill.yellow{
+      background: var(--pill-yellow);
+      color: #111827;
+      box-shadow: 0 12px 20px rgba(246, 194, 26, 0.30);
+    }
+    .pill.red{ background: var(--pill-red); }
+
+    .eq{
+      font-weight: 800;
+      color: #111827;
+      opacity: 0.95;
+      min-width: 18px;
+      text-align:center;
+    }
+    .plus{
+      font-weight: 800;
+      color: #111827;
+      opacity: 0.45;
+      margin: 0 2px;
+      min-width: 10px;
+      text-align:center;
+    }
+
+    .rhs{
+      font-weight: 800;
+      color:#111827;
+      opacity: 0.95;
+      margin-left: 6px;
+    }
+    .rhs .times{
+      padding: 0 6px;
+      opacity: 0.85;
+    }
+
+    .legend{
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .legend code{
+      background:#eef2ff;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body>
-    <div class="tree-container">
-        <div class="tree-title">🌳 Symmetric Odd Number Tree (Center: 3)</div>
-        
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-color sum-color"></div>
-                <span>Sum</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color center-color"></div>
-                <span>Center (3)</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-color number-color"></div>
-                <span>Other Numbers</span>
-            </div>
-        </div>
-        
-        <div class="tree" id="tree">
-            <!-- Tree will be generated here -->
-        </div>
-        
-        <div class="pattern-info">
-            <h3>🔢 Pattern Explanation:</h3>
-            <p><strong>Row n:</strong> Contains (1 + 2n) odd numbers, symmetric around 3</p>
-            <p><strong>Numbers:</strong> Start from (3 - 2n) and increment by 2</p>
-            <p><strong>Sum:</strong> Always equals 3 × (number of terms in row)</p>
-            <p><strong>Growth:</strong> Each row adds one number to each side, forming a pyramid</p>
-        </div>
+  <div class="wrap">
+    <h1>Symmetric Odd Number Tree (Center: 3)</h1>
+    <p class="sub">
+      Each row is a symmetric run of consecutive odd numbers centered at <b>3</b>.
+      The sum is always <b>center × (number of terms)</b>.
+    </p>
+
+    <div class="controls">
+      <label>
+        Rows (depth):
+        <input id="depth" type="range" min="0" max="20" value="6"/>
+        <span class="value" id="depthVal">6</span>
+      </label>
+      <label>
+        Show "etc" on last row
+        <input id="showEtc" type="checkbox" checked/>
+      </label>
     </div>
 
-    <script>
-        function generateSymmetricOddTree(center, numRows) {
-            const rows = [];
-            for (let i = 0; i < numRows; i++) {
-                const p = 1 + 2 * i;
-                const half = Math.floor(p / 2);
-                const sequence = [];
-                for (let k = -half; k <= half; k++) {
-                    sequence.push(center + 2 * k);
-                }
-                const total = sequence.reduce((sum, num) => sum + num, 0);
-                rows.push({total, sequence, rowNumber: i});
-            }
-            return rows;
-        }
+    <div class="eq-area" id="eqArea"></div>
 
-        function renderTree() {
-            const treeContainer = document.getElementById('tree');
-            const treeRows = generateSymmetricOddTree(3, 10);
-            
-            treeContainer.innerHTML = '';
-            
-            treeRows.forEach((row, index) => {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'tree-row';
-                
-                // Row number
-                const rowNumber = document.createElement('div');
-                rowNumber.className = 'row-number';
-                rowNumber.textContent = index;
-                rowDiv.appendChild(rowNumber);
-                
-                // Sum box
-                const sumBox = document.createElement('div');
-                sumBox.className = 'sum-box';
-                sumBox.textContent = row.total;
-                rowDiv.appendChild(sumBox);
-                
-                // Equals sign
-                const equals = document.createElement('div');
-                equals.className = 'equals';
-                equals.textContent = '=';
-                rowDiv.appendChild(equals);
-                
-                // Numbers container
-                const numbersContainer = document.createElement('div');
-                numbersContainer.className = 'numbers-container';
-                
-                row.sequence.forEach((num, numIndex) => {
-                    if (numIndex > 0) {
-                        const plus = document.createElement('span');
-                        plus.className = 'plus';
-                        plus.textContent = '+';
-                        numbersContainer.appendChild(plus);
-                    }
-                    
-                    const numberDiv = document.createElement('div');
-                    numberDiv.className = 'number';
-                    if (num === 3) {
-                        numberDiv.classList.add('center-number');
-                    }
-                    numberDiv.textContent = num;
-                    numbersContainer.appendChild(numberDiv);
-                });
-                
-                rowDiv.appendChild(numbersContainer);
-                treeContainer.appendChild(rowDiv);
-            });
-        }
+    <div class="legend">
+      Pattern:
+      row <code>n</code> has <code>2n+1</code> terms:
+      <code>center-2n, center-2n+2, ..., center+2n</code>.
+      Sum = <code>center × (2n+1)</code>.
+    </div>
+  </div>
 
-        // Render the tree when page loads
-        renderTree();
-    </script>
+  <script>
+    const CENTER = 3;
+
+    function buildRow(n){
+      const m = 2*n + 1;               // number of terms
+      const start = CENTER - 2*n;
+      const terms = [];
+      for(let i=0;i<m;i++){
+        terms.push(start + 2*i);
+      }
+      const sum = CENTER * m;
+      return { n, m, terms, sum };
+    }
+
+    function pillHTML(value){
+      const cls = (value === CENTER) ? "pill yellow" : "pill teal";
+      return `<span class="${cls}">${value}</span>`;
+    }
+
+    function render(){
+      const depth = Number(document.getElementById("depth").value);
+      const showEtc = document.getElementById("showEtc").checked;
+      document.getElementById("depthVal").textContent = depth;
+
+      const eqArea = document.getElementById("eqArea");
+      eqArea.innerHTML = "";
+
+      // Render rows n = 0..depth (inclusive)
+      for(let n=0; n<=depth; n++){
+        const { m, terms, sum } = buildRow(n);
+
+        const left = `<span class="pill red">${sum}</span>`;
+        const mid = terms.map((t, i) => {
+          const p = pillHTML(t);
+          return (i === 0) ? p : `<span class="plus">+</span>${p}`;
+        }).join("");
+
+        const right = `<span class="rhs">= ${CENTER}<span class="times">x</span>${m}</span>`;
+
+        const etc = (showEtc && n === depth) ? `<span class="rhs" style="opacity:.55; margin-left:14px;">etc</span>` : "";
+
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `${left}<span class="eq">=</span>${mid}${right}${etc}`;
+        eqArea.appendChild(row);
+      }
+    }
+
+    document.getElementById("depth").addEventListener("input", render);
+    document.getElementById("showEtc").addEventListener("change", render);
+    render();
+  </script>
 </body>
 </html>
