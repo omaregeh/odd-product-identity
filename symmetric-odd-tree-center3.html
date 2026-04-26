@@ -1,259 +1,458 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Symmetric Odd Number Tree (Center: 3)</title>
-  <style>
-    :root{
-      --bg:#f6f7fb;
-      --pill-teal:#31b7a8;
-      --pill-yellow:#f6c21a;
-      --pill-red:#ff5b4d;
-      --text:#0f172a;
-      --muted:#475569;
-      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:var(--text);
-      background:var(--bg);
-    }
-    .wrap{
-      max-width: 1200px;
-      margin: 24px auto 60px;
-      padding: 0 16px;
-    }
-    h1{
-      font-size: 20px;
-      margin: 0 0 10px;
-      font-weight: 700;
-    }
-    .sub{
-      color: var(--muted);
-      margin: 0 0 18px;
-      line-height: 1.4;
-      font-size: 14px;
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Symmetric Odd Number Tree</title>
+
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --panel: #ffffff;
+    --ink: #1f2937;
+    --muted: #5b6472;
+    --line: #e8edf5;
+
+    --red: #ff514b;
+    --teal: #2fb8aa;
+    --yellow: #ffc20e;
+
+    --chip-w: 56px;
+    --chip-h: 36px;
+    --plus-w: 18px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    padding: 22px 28px;
+  }
+
+  h1 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .controls {
+    margin-top: 18px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px 28px;
+    background: var(--panel);
+    border-radius: 18px;
+  }
+
+  .control-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #334155;
+    font-size: 15px;
+  }
+
+  label {
+    font-weight: 500;
+  }
+
+  input[type="number"] {
+    width: 120px;
+    height: 38px;
+    border: 1px solid #cfd8e3;
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    background: #fff;
+  }
+
+  input[type="range"] {
+    width: 260px;
+    accent-color: #1976d2;
+  }
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #1976d2;
+  }
+
+  .number-display {
+    min-width: 26px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: #0f172a;
+  }
+
+  .message {
+    margin-top: 12px;
+    min-height: 24px;
+    font-weight: 700;
+    color: #b42318;
+  }
+
+  main {
+    padding: 28px 28px 40px;
+  }
+
+  .tree-card {
+    position: relative;
+    background: var(--panel);
+    border-radius: 22px;
+    padding: 32px 24px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    overflow-x: auto;
+  }
+
+  .tree {
+    position: relative;
+    min-width: 760px;
+    padding: 6px 0;
+  }
+
+  .tree::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 3px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 194, 14, 0.05),
+      rgba(255, 194, 14, 0.28),
+      rgba(255, 194, 14, 0.05)
+    );
+    border-radius: 999px;
+    pointer-events: none;
+  }
+
+  .row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 12px;
+    min-height: 62px;
+    margin: 2px 0;
+  }
+
+  .left-side,
+  .right-side {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    white-space: nowrap;
+    font-size: 22px;
+    font-weight: 900;
+    color: #111827;
+  }
+
+  .left-side {
+    justify-self: end;
+  }
+
+  .right-side {
+    justify-self: start;
+  }
+
+  .term-line {
+    justify-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--chip-w);
+    height: var(--chip-h);
+    padding: 0 11px;
+    border-radius: 999px;
+    color: white;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 1;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.10);
+  }
+
+  .chip.result {
+    background: var(--red);
+  }
+
+  .chip.term {
+    background: var(--teal);
+  }
+
+  .chip.center {
+    position: relative;
+    z-index: 2;
+    background: var(--yellow);
+    color: #111827;
+    box-shadow: 0 0 26px rgba(255, 194, 14, 0.55);
+  }
+
+  .eq,
+  .plus {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #7b8491;
+    font-weight: 900;
+  }
+
+  .eq {
+    color: #111827;
+    font-size: 22px;
+  }
+
+  .plus {
+    width: var(--plus-w);
+    font-size: 22px;
+  }
+
+  .product {
+    letter-spacing: 0.3px;
+  }
+
+  .etc {
+    margin-left: 8px;
+    color: #737b86;
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  .small-note {
+    color: var(--muted);
+    margin-top: 18px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  @media (max-width: 800px) {
+    header {
+      padding: 18px;
     }
 
-    .controls{
-      display:flex;
-      gap:16px;
-      align-items:center;
-      flex-wrap:wrap;
-      padding: 14px 14px;
-      background:white;
-      border-radius: 14px;
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
-    }
-    .controls label{
-      font-size: 13px;
-      color: var(--muted);
-      display:flex;
-      gap:10px;
-      align-items:center;
-    }
-    .controls input[type="range"]{
-      width: 260px;
-    }
-    .controls .value{
-      font-weight: 700;
-      color: var(--text);
-      min-width: 34px;
-      text-align:right;
+    main {
+      padding: 18px;
     }
 
-    .eq-area{
-      background:white;
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 18px 14px 22px;
-      overflow-x:auto;
-      position: relative;
+    .tree-card {
+      padding: 24px 12px;
     }
 
-    /* Optional faint center guide line to emphasize the "tree" */
-    .eq-area::before{
-      content:"";
-      position:absolute;
-      top: 12px;
-      bottom: 12px;
-      left: 50%;
-      width: 2px;
-      transform: translateX(-1px);
-      background: rgba(15, 23, 42, 0.04);
-      pointer-events:none;
+    .tree {
+      min-width: 680px;
     }
 
-    /* TREE LAYOUT: left sum | centered expression | right multiplication */
-    .row{
-      display: grid;
-      grid-template-columns: 120px 1fr 140px;
-      align-items: center;
-      column-gap: 14px;
-      padding: 10px 8px;
-      white-space: nowrap;
-      position: relative;
-      z-index: 1; /* above the guide line */
+    :root {
+      --chip-w: 50px;
+      --chip-h: 34px;
+      --plus-w: 15px;
     }
 
-    .left{ justify-self: start; }
-
-    .mid{
-      justify-self: center;            /* THIS is what fixes the slant */
-      display: inline-flex;
-      align-items: center;
+    .chip {
+      font-size: 15px;
     }
 
-    .right{
-      justify-self: start;
-      font-weight: 800;
-      color:#111827;
-      opacity: 0.95;
+    .left-side,
+    .right-side,
+    .eq,
+    .plus {
+      font-size: 19px;
     }
-    .right .times{
-      padding: 0 6px;
-      opacity: 0.85;
-    }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      height: 34px;
-      padding: 0 14px;
-      border-radius: 999px;
-      color: white;
-      font-weight: 700;
-      font-size: 14px;
-      letter-spacing: 0.2px;
-      box-shadow: 0 10px 18px rgba(15,23,42,0.10);
-    }
-    .pill.teal{ background: var(--pill-teal); }
-    .pill.yellow{
-      background: var(--pill-yellow);
-      color: #111827;
-      box-shadow: 0 12px 20px rgba(246, 194, 26, 0.30);
-    }
-    .pill.red{ background: var(--pill-red); }
-
-    .eq{
-      font-weight: 800;
-      color: #111827;
-      opacity: 0.95;
-      min-width: 18px;
-      text-align:center;
-      margin-right: 10px;
-    }
-    .plus{
-      font-weight: 800;
-      color: #111827;
-      opacity: 0.45;
-      margin: 0 8px;
-      min-width: 10px;
-      text-align:center;
-    }
-
-    .legend{
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-    .legend code{
-      background:#eef2ff;
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 12px;
-    }
-  </style>
+  }
+</style>
 </head>
-<body>
-  <div class="wrap">
-    <h1>Symmetric Odd Number Tree (Center: 3)</h1>
-    <p class="sub">
-      Each row is a symmetric run of consecutive odd numbers centered at <b>3</b>.
-      The sum is always <b>center × (number of terms)</b>.
-    </p>
 
-    <div class="controls">
-      <label>
-        Rows (depth):
-        <input id="depth" type="range" min="0" max="20" value="6"/>
-        <span class="value" id="depthVal">6</span>
-      </label>
-      <label>
-        Show "etc" on last row
-        <input id="showEtc" type="checkbox" checked/>
-      </label>
+<body>
+<header>
+  <h1>Symmetric Odd Number Tree</h1>
+  <p class="sub">
+    Enter an odd center number. Each row adds consecutive odd numbers around that center.
+  </p>
+
+  <div class="controls">
+    <div class="control-group">
+      <label for="centerInput">Odd number:</label>
+      <input id="centerInput" type="number" step="2" value="3" />
     </div>
 
-    <div class="eq-area" id="eqArea"></div>
+    <div class="control-group">
+      <label for="depth">Rows (depth):</label>
+      <input id="depth" type="range" min="0" max="20" step="1" value="6" />
+      <span id="depthVal" class="number-display">6</span>
+    </div>
 
-    <div class="legend">
-      Pattern:
-      row <code>n</code> has <code>2n+1</code> terms:
-      <code>center-2n, center-2n+2, ..., center+2n</code>.
-      Sum = <code>center × (2n+1)</code>.
+    <div class="control-group">
+      <label for="showEtc">Show "etc" on last row</label>
+      <input id="showEtc" type="checkbox" checked />
     </div>
   </div>
 
-  <script>
-    const CENTER = 3;
+  <div id="message" class="message"></div>
+</header>
 
-    function buildRow(n){
-      const m = 2*n + 1;               // number of terms
-      const start = CENTER - 2*n;
-      const terms = [];
-      for(let i=0;i<m;i++){
-        terms.push(start + 2*i);
+<main>
+  <section class="tree-card">
+    <div id="tree" class="tree"></div>
+  </section>
+
+  <p class="small-note">
+    Formula: the sum of each row is the center odd number multiplied by the number of terms in that row.
+  </p>
+</main>
+
+<script>
+  const centerInput = document.getElementById("centerInput");
+  const depthInput = document.getElementById("depth");
+  const depthVal = document.getElementById("depthVal");
+  const showEtc = document.getElementById("showEtc");
+  const message = document.getElementById("message");
+  const tree = document.getElementById("tree");
+
+  function isOddInteger(value) {
+    return Number.isInteger(value) && Math.abs(value % 2) === 1;
+  }
+
+  function makeChip(value, className) {
+    const chip = document.createElement("span");
+    chip.className = `chip ${className}`;
+    chip.textContent = value;
+    return chip;
+  }
+
+  function makeText(value, className) {
+    const span = document.createElement("span");
+    span.className = className;
+    span.textContent = value;
+    return span;
+  }
+
+  function getLongestDisplayedNumber(center, depth) {
+    let longest = 1;
+
+    for (let row = 0; row <= depth; row++) {
+      const leftMost = center - 2 * row;
+      const rightMost = center + 2 * row;
+      const rowSum = center * (2 * row + 1);
+
+      longest = Math.max(
+        longest,
+        String(leftMost).length,
+        String(rightMost).length,
+        String(rowSum).length,
+        String(center).length
+      );
+    }
+
+    return longest;
+  }
+
+  function updateChipWidth(center, depth) {
+    const longest = getLongestDisplayedNumber(center, depth);
+
+    /*
+      56px looks good for small values like 3, 11, -9.
+      Larger typed numbers need wider circles/pills so the digits do not crush.
+    */
+    const width = Math.max(56, 28 + longest * 11);
+    document.documentElement.style.setProperty("--chip-w", `${width}px`);
+  }
+
+  function render() {
+    const center = Number(centerInput.value);
+    const depth = Number(depthInput.value);
+
+    depthVal.textContent = depth;
+    tree.innerHTML = "";
+
+    if (!isOddInteger(center)) {
+      message.textContent = "Only odd whole numbers can be used. Try 3, 5, 7, -1, -3, etc.";
+      return;
+    }
+
+    message.textContent = "";
+    updateChipWidth(center, depth);
+
+    for (let rowIndex = 0; rowIndex <= depth; rowIndex++) {
+      const termCount = 2 * rowIndex + 1;
+      const rowSum = center * termCount;
+
+      const row = document.createElement("div");
+      row.className = "row";
+
+      const leftSide = document.createElement("div");
+      leftSide.className = "left-side";
+      leftSide.appendChild(makeChip(rowSum, "result"));
+      leftSide.appendChild(makeText("=", "eq"));
+
+      const termLine = document.createElement("div");
+      termLine.className = "term-line";
+
+      for (let i = -rowIndex; i <= rowIndex; i++) {
+        const value = center + 2 * i;
+        const chipClass = i === 0 ? "term center" : "term";
+
+        termLine.appendChild(makeChip(value, chipClass));
+
+        if (i < rowIndex) {
+          termLine.appendChild(makeText("+", "plus"));
+        }
       }
-      const sum = CENTER * m;
-      return { n, m, terms, sum };
-    }
 
-    function pillHTML(value){
-      const cls = (value === CENTER) ? "pill yellow" : "pill teal";
-      return `<span class="${cls}">${value}</span>`;
-    }
+      const rightSide = document.createElement("div");
+      rightSide.className = "right-side";
 
-    function render(){
-      const depth = Number(document.getElementById("depth").value);
-      const showEtc = document.getElementById("showEtc").checked;
-      document.getElementById("depthVal").textContent = depth;
+      const product = document.createElement("span");
+      product.className = "product";
+      product.textContent = `= ${center} x ${termCount}`;
+      rightSide.appendChild(product);
 
-      const eqArea = document.getElementById("eqArea");
-      eqArea.innerHTML = "";
-
-      for(let n=0; n<=depth; n++){
-        const { m, terms, sum } = buildRow(n);
-
-        const left = `<span class="pill red">${sum}</span>`;
-
-        const mid = terms.map((t, i) => {
-          const p = pillHTML(t);
-          return (i === 0) ? p : `<span class="plus">+</span>${p}`;
-        }).join("");
-
-        const etc = (showEtc && n === depth) ? `<span style="opacity:.55; margin-left:14px;">etc</span>` : "";
-
-        const row = document.createElement("div");
-        row.className = "row";
-        row.innerHTML = `
-          <div class="left">${left}</div>
-          <div class="mid"><span class="eq">=</span>${mid}</div>
-          <div class="right">= ${CENTER}<span class="times">x</span>${m}${etc}</div>
-        `;
-        eqArea.appendChild(row);
+      if (showEtc.checked && rowIndex === depth) {
+        rightSide.appendChild(makeText("etc", "etc"));
       }
-    }
 
-    document.getElementById("depth").addEventListener("input", render);
-    document.getElementById("showEtc").addEventListener("change", render);
-    render();
-  </script>
+      row.appendChild(leftSide);
+      row.appendChild(termLine);
+      row.appendChild(rightSide);
+
+      tree.appendChild(row);
+    }
+  }
+
+  centerInput.addEventListener("input", render);
+  depthInput.addEventListener("input", render);
+  showEtc.addEventListener("change", render);
+
+  render();
+</script>
 </body>
 </html>
